@@ -1,6 +1,6 @@
  # Ignore temporary and binary files
-*.pbix
-*.twbx
-~$*.xlsx
+# *.pbix
+# *.twbx
+# ~$*.xlsx
 __pycache__/
 *.DS_Store
