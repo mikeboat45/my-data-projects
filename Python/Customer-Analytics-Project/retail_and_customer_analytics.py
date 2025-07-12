@@ -12,7 +12,7 @@ Original file is located at
 3. Form a strategy based on the findings to provide a clear recommendation to the Category Manager
 """
 
-#importing important libraries from the analysis
+#importing important libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -33,8 +33,6 @@ df1.describe(include='object')
 
 import re
 
-# Assuming your data is in a pandas DataFrame called 'transactionData'
-
 # 1. Extract unique words from 'PROD_NAME'
 productWords = pd.Series(' '.join(df1['PROD_NAME'].unique()).split()).unique()
 
@@ -46,10 +44,7 @@ productWords = [word for word in productWords if re.match(r'^[a-zA-Z]+$', word)]
 print(productWords)
 
 
-
 from collections import Counter
-
-# Assuming 'productWords' is the list of unique words
 
 word_counts = Counter(productWords)  # Count word frequencies
 
@@ -61,8 +56,6 @@ for word, count in sorted_words:
     print(f"{word}: {count}")
 
 import pandas as pd
-
-# Assuming your data is in a pandas DataFrame called 'transactionData'
 
 # 1. Create a boolean mask for salsa products
 salsa_mask = df1['PROD_NAME'].str.lower().str.contains('salsa')
@@ -110,13 +103,6 @@ plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
 
-'''FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.
-The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.
-
-For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.
-
-
-  transactions_by_day['TXN_ID'].fillna(0, inplace=True)'''
 
 # Filter data for December
 december_data = transactions_by_day[(transactions_by_day['DATE'] >= '2018-12-01') & (transactions_by_day['DATE'] <= '2018-12-31')]
@@ -131,18 +117,15 @@ plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 plt.show()
 
-# Assuming your data is in a pandas DataFrame called 'transactionData'
-
 # Extract pack size using regular expressions
 df1['PACK_SIZE'] = df1['PROD_NAME'].str.extract('(\d+)').astype(int)
 
 # Check the distribution of pack sizes
 print(df1['PACK_SIZE'].value_counts().sort_index())
 
-# Assuming 'transactionData' is your DataFrame with the 'PACK_SIZE' column
 
-plt.figure(figsize=(8, 6))  # Adjust figure size if needed
-plt.hist(df1['PACK_SIZE'], bins=20, edgecolor='black')  # Adjust 'bins' for desired bin width
+plt.figure(figsize=(8, 6))  
+plt.hist(df1['PACK_SIZE'], bins=20, edgecolor='black')  
 plt.title('Distribution of Pack Sizes')
 plt.xlabel('Pack Size')
 plt.ylabel('Frequency')
@@ -244,12 +227,12 @@ lifestage_sales = merged_df.groupby('LIFESTAGE')['TOT_SALES'].sum().reset_index(
 # Sort by total sales in descending order
 lifestage_sales = lifestage_sales.sort_values(by=['TOT_SALES'], ascending=False)
 
-plt.figure(figsize=(12, 6))  # Adjust width for better readability
+plt.figure(figsize=(12, 6)) 
 sns.barplot(x='LIFESTAGE', y='TOT_SALES', data=lifestage_sales, order=lifestage_sales['LIFESTAGE'])
 plt.title('Total Sales by Lifestage')
 plt.xlabel('Lifestage')
 plt.ylabel('Total Sales')
-plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for readability
+plt.xticks(rotation=45, ha='right') 
 plt.show()
 
 """Older customers (singles/couples and families) and retirees generate the most revenue each about USD 350,000.00
@@ -265,14 +248,10 @@ segment_revenue = merged_df.groupby(['LIFESTAGE', 'PREMIUM_CUSTOMER'])['TOT_SALE
 
 # Sort by revenue in descending order
 segment_revenue = segment_revenue.sort_values(ascending=False)
-
-# Display the results
 print(segment_revenue)
 
 # Group by LIFESTAGE and PREMIUM_CUSTOMER and count unique customer IDs
 customer_counts = merged_df.groupby(['LIFESTAGE', 'PREMIUM_CUSTOMER'])['LYLTY_CARD_NBR'].nunique()
-
-# Display the results
 print(customer_counts)
 
 # Calculate total units and number of transactions for each segment
@@ -283,8 +262,6 @@ segment_data = segment_data.rename(columns={'sum': 'TOTAL_UNITS', 'count': 'TOTA
 
 # Calculate average units per transaction (treating each transaction as a customer)
 segment_data['AVG_UNITS_PER_TRANSACTION'] = segment_data['TOTAL_UNITS'] / segment_data['TOTAL_TRANSACTIONS']
-
-# Display the results
 print(segment_data['AVG_UNITS_PER_TRANSACTION'])
 
 # Calculate total units and unique customers for each segment
@@ -295,11 +272,7 @@ customer_units = customer_units.rename(columns={'sum': 'TOTAL_UNITS', 'nunique':
 
 # Calculate average units per customer
 customer_units['AVG_UNITS_PER_CUSTOMER'] = customer_units['TOTAL_UNITS'] / customer_units['UNIQUE_CUSTOMERS']
-
-# Display the results (optional)
 print(customer_units['AVG_UNITS_PER_CUSTOMER'])
-
-# ... (previous code to calculate customer_units) ...
 
 # Create a box plot
 plt.figure(figsize=(10, 6))
@@ -307,7 +280,7 @@ sns.boxplot(x='LIFESTAGE', y='AVG_UNITS_PER_CUSTOMER', data=customer_units.reset
 plt.title('Average Units per Customer by Lifestage')
 plt.xlabel('Lifestage')
 plt.ylabel('Average Units')
-plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels for readability
+plt.xticks(rotation=45, ha='right') 
 plt.show()
 
 # Calculate total sales and total units for each segment
@@ -315,11 +288,7 @@ segment_prices = merged_df.groupby(['LIFESTAGE', 'PREMIUM_CUSTOMER'])[['TOT_SALE
 
 # Calculate average price per unit
 segment_prices['AVG_PRICE_PER_UNIT'] = segment_prices['TOT_SALES'] / segment_prices['PROD_QTY']
-
-# Display the results (optional)
 print(segment_prices['AVG_PRICE_PER_UNIT'])
-
-# ... (previous code to calculate segment_prices) ...
 
 # Convert the multi-index to regular columns
 segment_prices = segment_prices.reset_index()
@@ -336,8 +305,6 @@ plt.show()
 
 import scipy.stats as stats
 
-# Assuming you have the 'segment_prices' DataFrame with 'AVG_PRICE_PER_UNIT', 'LIFESTAGE', and 'PREMIUM_CUSTOMER' columns
-
 # Extract data for Mainstream and Budget/Premium segments
 '''mainstream_prices = segment_prices[segment_prices['PREMIUM_CUSTOMER'] == 'Mainstream']['AVG_PRICE_PER_UNIT']
 budget_premium_prices = segment_prices[segment_prices['PREMIUM_CUSTOMER'].isin(['Budget', 'Premium'])]['AVG_PRICE_PER_UNIT']
@@ -350,8 +317,6 @@ print(f"T-statistic: {t_statistic:.2f}")
 print(f"P-value: {p_value:.3f}")'''
 
 import scipy.stats as stats
-
-# Assuming you have the 'segment_prices' DataFrame
 
 # Filter data for the two segments
 segment1 = segment_prices[
@@ -370,7 +335,6 @@ t_statistic, p_value = stats.ttest_ind(segment1, segment2)
 # Print the results
 print(f"T-statistic: {t_statistic:.2f}")
 print(f"P-value: {p_value:.3f}")
-
 
 
 # Filter for the target segment
@@ -432,8 +396,6 @@ plt.show()
 
 # Calculate average spending per purchase (transaction)
 average_spending = mainstream_young_singles_couples.groupby('TXN_ID')['TOT_SALES'].sum().mean()
-
-# Print the result
 print(f"Average Spending per Purchase: {average_spending:.2f}")
 
 #Histogram of average spending of mainstream, young singles/couples
@@ -518,17 +480,12 @@ for item in results:
     else:
         print("Rule skipped due to missing antecedent or consequent.")
 
-"""# Extras
-
-"""
 
 # Group by LIFESTAGE and PREMIUM_CUSTOMER and count unique TXN_ID (number of customers)
 segment_customers = merged_df.groupby(['LIFESTAGE', 'PREMIUM_CUSTOMER'])['TXN_ID'].nunique()
 
 # Sort by number of customers in descending order
 segment_customers = segment_customers.sort_values(ascending=False)
-
-# Display the results
 print(segment_customers)
 
 
